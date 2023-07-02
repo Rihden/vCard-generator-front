@@ -1,44 +1,24 @@
 import { useState } from "react";
 import { useQRCode } from "next-qrcode";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 function Form() {
   const { Canvas } = useQRCode();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const inputDefaultStateClasses =
     "py-3 px-4 block w-full border-gray-200 border-solid border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400";
+  const inputSocialMediaClasses =
+    "py-3 px-4 grow border-gray-200 border-solid border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400";
   const inputErrorStateClasses = "border-red-400 border-2";
-  const [firstNameClasses, setFirstNameClasses] = useState(
-    inputDefaultStateClasses
-  );
-  const [lastNameClasses, setLastNameClasses] = useState(
-    inputDefaultStateClasses
-  );
-  const [emailClasses, setEmailClasses] = useState(inputDefaultStateClasses);
-  const [titleClasses, setTitleClasses] = useState(inputDefaultStateClasses);
-  const [companyClasses, setCompanyClasses] = useState(
-    inputDefaultStateClasses
-  );
+  const navigate = useNavigate();
 
-  const [companyAddressClasses, setComapanyAddress] = useState(
-    inputDefaultStateClasses
-  );
-
-  const [phoneClasses, setPhoneClasses] = useState(inputDefaultStateClasses);
-  const [mobileClasses, setMobileClasses] = useState(inputDefaultStateClasses);
-
-  const [errorMessage, setErrorMessage] = useState("");
-  const [passUrl, setPassUrl] = useState("");
-  const [pdfFile, setPdfFile] = useState("");
-  const [QRurl, setQRurl] = useState("");
   const [firstName, setFirstName] = useState("");
-  const [firstNameError, setFirstNameError] = useState(false);
   const [lastName, setLastName] = useState("");
-  const [lastNameError, setLastNameError] = useState(false);
-  const [titleError, setTitleError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [companyError, setCompanyError] = useState(false);
-  const [companyAddressError, setCompanyAddressError] = useState(false);
-  const [phoneError, setPhoneError] = useState(false);
-  const [mobileError, setMobileError] = useState(false);
 
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
@@ -48,180 +28,48 @@ function Form() {
   const [mobile, setMobile] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [facebook, setFacebook] = useState("");
-  const [formError, setFormError] = useState(false);
   const [logoSRC, setLogoSRC] = useState(null);
   const [logoFile, setFile] = useState(null);
 
-  const resetFormErrors = function () {
-    setFirstNameClasses(inputDefaultStateClasses);
-    setLastNameClasses(inputDefaultStateClasses);
-    setEmailClasses(inputDefaultStateClasses);
-    setCompanyClasses(inputDefaultStateClasses);
-    setComapanyAddress(inputDefaultStateClasses);
-    setPhoneClasses(inputDefaultStateClasses);
-    setTitleClasses(inputDefaultStateClasses);
-    setMobileClasses(inputDefaultStateClasses);
-    setErrorMessage("");
-    setFormError(false);
-    setFirstNameError(false);
-    setLastNameError(false);
-    setTitleError(false);
-    setEmailError(false);
-    setCompanyError(false);
-    setCompanyAddressError(false);
-    setPhoneError(false);
-    setMobileError(false);
+  const navigateToCard = () => {
+    navigate("/vcard/nedhir");
   };
 
-  const validateFields = function () {
-    const alphabetic = /^[A-Za-z\s]*$/;
-    const alphanumeric = /^[\w\-\s]+$/;
-    const numeric = /^\+?[0-9\s]*$/;
-    const emailRegex = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
+  const alphabetic = /^[A-Za-z\s]*$/;
+  const alphanumeric = /^[\w\-\s]+$/;
+  const numeric = /^\+?[0-9\s]*$/;
+  const emailRegex = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
 
-    resetFormErrors();
-
-    if (mobile === "") {
-      setFormError(true);
-      setMobileError(true);
-
-      setMobileClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Mobile number is required.");
-    } else if (!numeric.test(mobile)) {
-      setFormError(true);
-      setMobileError(true);
-      setMobileClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Please enter a valid mobile number.");
-    }
-
-    if (phone === "") {
-      setFormError(true);
-      setPhoneError(true);
-
-      setPhoneClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Phone number is required.");
-    } else if (!numeric.test(phone)) {
-      setFormError(true);
-      setPhoneError(true);
-      setPhoneClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Please enter a valid phone number.");
-    }
-
-    if (companyAddress === "") {
-      setCompanyAddressError(true);
-      setFormError(true);
-      setComapanyAddress(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("Company address is required.");
-    }
-
-    if (company === "") {
-      setFormError(true);
-      setCompanyError(true);
-      setCompanyClasses(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("Company is required.");
-    } else if (!alphanumeric.test(company)) {
-      setFormError(true);
-      setCompanyError(true);
-      setCompanyClasses(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("Company may only contain alphanumeric characters.");
-    }
-
-    if (email === "") {
-      setFormError(true);
-      setEmailError(true);
-
-      setEmailClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Email is required.");
-    } else if (!emailRegex.test(email)) {
-      setFormError(true);
-      setEmailError(true);
-      setEmailClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Please enter a valid email.");
-    }
-
-    if (title === "") {
-      setFormError(true);
-      setTitleError(true);
-      setTitleClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Title is required.");
-    } else if (!alphabetic.test(title)) {
-      setFormError(true);
-      setTitleError(true);
-      setTitleClasses(inputDefaultStateClasses + " " + inputErrorStateClasses);
-      setErrorMessage("Title may only contain alphabetic characters.");
-    }
-
-    if (lastName === "") {
-      setFormError(true);
-      setLastNameError(true);
-      setLastNameClasses(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("Last name is required.");
-    } else if (!alphabetic.test(lastName)) {
-      setFormError(true);
-      setLastNameError(true);
-      setLastNameClasses(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("Last name may only contain alphabetic characters.");
-    }
-
-    if (firstName === "") {
-      setFormError(true);
-      setFirstNameError(true);
-      setFirstNameClasses(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("First name is required.");
-    } else if (!alphabetic.test(firstName)) {
-      setFormError(true);
-      setFirstNameError(true);
-      setFirstNameClasses(
-        inputDefaultStateClasses + " " + inputErrorStateClasses
-      );
-      setErrorMessage("First name may only contain alphabetic characters.");
-    }
+  const onSubmit = function () {
+    console.log({
+      firstName,
+      lastName,
+      title,
+      email,
+      company,
+      companyAddress,
+      phone,
+      mobile,
+      linkedin,
+      facebook,
+    });
+    navigateToCard();
   };
+
   return (
     <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-      <Canvas
-        logo={{
-          src: logoSRC,
-          options: {
-            width: 40,
-            x: undefined,
-            y: undefined,
-          },
-        }}
-        text={"https://github.com/bunlong/next-qrcode"}
-        options={{
-          type: "image/png",
-          quality: 0.3,
-          level: "M",
-          margin: 3,
-          scale: 4,
-          width: 200,
-        }}
-      />
       <div className="max-w-xl mx-auto">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
-            Generate your business card
+            Generate Virtual Business Card
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Add your business card info
+            Add your card info
           </p>
         </div>
 
         <div className="mt-12">
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-4 lg:gap-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                 <div>
@@ -236,11 +84,18 @@ function Form() {
                       type="text"
                       name="hs-firstname-hire-us-2"
                       id="hs-firstname-hire-us-2"
-                      className={firstNameClasses}
+                      className={`${inputDefaultStateClasses} ${
+                        errors.firstName ? inputErrorStateClasses : " "
+                      }`}
+                      {...register("firstName", {
+                        required: true,
+                        pattern: alphabetic,
+                      })}
+                      aria-invalid={errors.firstName ? "true" : "false"}
                       onInput={(e) => setFirstName(e.target.value)}
                       value={firstName}
                     />
-                    {firstNameError && (
+                    {errors.firstName && (
                       <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                         <svg
                           className="h-5 w-5 text-red-500"
@@ -255,6 +110,22 @@ function Form() {
                       </div>
                     )}
                   </div>
+                  {errors.firstName?.type === "required" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field is required.
+                    </p>
+                  )}
+                  {errors.firstName?.type === "pattern" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field can only containt alphabetic characters.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -269,11 +140,18 @@ function Form() {
                       type="text"
                       name="hs-lastname-hire-us-2"
                       id="hs-lastname-hire-us-2"
-                      className={lastNameClasses}
+                      className={`${inputDefaultStateClasses} ${
+                        errors.lastName ? inputErrorStateClasses : " "
+                      }`}
+                      {...register("lastName", {
+                        required: true,
+                        pattern: alphabetic,
+                      })}
+                      aria-invalid={errors.lastName ? "true" : "false"}
                       onInput={(e) => setLastName(e.target.value)}
                       value={lastName}
                     />
-                    {lastNameError && (
+                    {errors.lastName && (
                       <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                         <svg
                           className="h-5 w-5 text-red-500"
@@ -288,6 +166,22 @@ function Form() {
                       </div>
                     )}
                   </div>
+                  {errors.lastName?.type === "required" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field is required.
+                    </p>
+                  )}
+                  {errors.lastName?.type === "pattern" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field can only containt alphabetic characters.
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -304,11 +198,17 @@ function Form() {
                     type="text"
                     name="hs-work-email-hire-us-2"
                     id="hs-work-email-hire-us-2"
-                    className={titleClasses}
+                    className={`${inputDefaultStateClasses} ${
+                      errors.title ? inputErrorStateClasses : " "
+                    }`}
+                    {...register("title", {
+                      required: true,
+                    })}
+                    aria-invalid={errors.title ? "true" : "false"}
                     onInput={(e) => setTitle(e.target.value)}
                     value={title}
                   />
-                  {titleError && (
+                  {errors.title && (
                     <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                       <svg
                         className="h-5 w-5 text-red-500"
@@ -323,6 +223,14 @@ function Form() {
                     </div>
                   )}
                 </div>
+                {errors.title?.type === "required" && (
+                  <p
+                    className="text-sm text-red-500 mt-2"
+                    id="hs-input-helper-text"
+                  >
+                    This field is required.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -338,11 +246,18 @@ function Form() {
                     name="hs-work-email-hire-us-2"
                     id="hs-work-email-hire-us-2"
                     autoComplete="email"
-                    className={emailClasses}
+                    className={`${inputDefaultStateClasses} ${
+                      errors.email ? inputErrorStateClasses : " "
+                    }`}
+                    {...register("email", {
+                      required: true,
+                      pattern: emailRegex,
+                    })}
+                    aria-invalid={errors.email ? "true" : "false"}
                     onInput={(e) => setEmail(e.target.value)}
                     value={email}
                   />
-                  {emailError && (
+                  {errors.email && (
                     <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                       <svg
                         className="h-5 w-5 text-red-500"
@@ -357,6 +272,22 @@ function Form() {
                     </div>
                   )}
                 </div>
+                {errors.email?.type === "required" && (
+                  <p
+                    className="text-sm text-red-500 mt-2"
+                    id="hs-input-helper-text"
+                  >
+                    This field is required.
+                  </p>
+                )}
+                {errors.email?.type === "pattern" && (
+                  <p
+                    className="text-sm text-red-500 mt-2"
+                    id="hs-input-helper-text"
+                  >
+                    Please enter a valid email.
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
@@ -372,11 +303,17 @@ function Form() {
                       type="text"
                       name="hs-company-hire-us-2"
                       id="hs-company-hire-us-2"
-                      className={companyClasses}
+                      className={`${inputDefaultStateClasses} ${
+                        errors.company ? inputErrorStateClasses : " "
+                      }`}
+                      {...register("company", {
+                        required: true,
+                      })}
+                      aria-invalid={errors.company ? "true" : "false"}
                       onInput={(e) => setCompany(e.target.value)}
                       value={company}
                     />
-                    {companyError && (
+                    {errors.company && (
                       <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                         <svg
                           className="h-5 w-5 text-red-500"
@@ -391,6 +328,14 @@ function Form() {
                       </div>
                     )}
                   </div>
+                  {errors.company?.type === "required" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field is required.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -405,11 +350,17 @@ function Form() {
                       type="text"
                       name="hs-company-website-hire-us-2"
                       id="hs-company-website-hire-us-2"
-                      className={companyAddressClasses}
+                      className={`${inputDefaultStateClasses} ${
+                        errors.companyAddress ? inputErrorStateClasses : " "
+                      }`}
+                      {...register("companyAddress", {
+                        required: true,
+                      })}
+                      aria-invalid={errors.companyAddress ? "true" : "false"}
                       onInput={(e) => setCompanyAddress(e.target.value)}
                       value={companyAddress}
                     />
-                    {companyAddressError && (
+                    {errors.companyAddress && (
                       <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                         <svg
                           className="h-5 w-5 text-red-500"
@@ -424,6 +375,14 @@ function Form() {
                       </div>
                     )}
                   </div>
+                  {errors.companyAddress?.type === "required" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field is required.
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -440,11 +399,18 @@ function Form() {
                       type="text"
                       name="hs-company-hire-us-2"
                       id="hs-company-hire-us-2"
-                      className={phoneClasses}
+                      className={`${inputDefaultStateClasses} ${
+                        errors.phone ? inputErrorStateClasses : " "
+                      }`}
+                      {...register("phone", {
+                        required: true,
+                        pattern: numeric,
+                      })}
+                      aria-invalid={errors.phone ? "true" : "false"}
                       onInput={(e) => setPhone(e.target.value)}
                       value={phone}
                     />
-                    {phoneError && (
+                    {errors.phone && (
                       <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                         <svg
                           className="h-5 w-5 text-red-500"
@@ -459,6 +425,22 @@ function Form() {
                       </div>
                     )}
                   </div>
+                  {errors.phone?.type === "required" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field is required.
+                    </p>
+                  )}
+                  {errors.phone?.type === "pattern" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      Please enter a valid phone number.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -473,11 +455,18 @@ function Form() {
                       type="text"
                       name="hs-company-website-hire-us-2"
                       id="hs-company-website-hire-us-2"
-                      className={mobileClasses}
+                      className={`${inputDefaultStateClasses} ${
+                        errors.mobile ? inputErrorStateClasses : " "
+                      }`}
+                      {...register("mobile", {
+                        required: true,
+                        pattern: numeric,
+                      })}
+                      aria-invalid={errors.mobile ? "true" : "false"}
                       onInput={(e) => setMobile(e.target.value)}
                       value={mobile}
                     />
-                    {mobileError && (
+                    {errors.mobile && (
                       <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                         <svg
                           className="h-5 w-5 text-red-500"
@@ -492,6 +481,22 @@ function Form() {
                       </div>
                     )}
                   </div>
+                  {errors.mobile?.type === "required" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      This field is required.
+                    </p>
+                  )}
+                  {errors.mobile?.type === "pattern" && (
+                    <p
+                      className="text-sm text-red-500 mt-2"
+                      id="hs-input-helper-text"
+                    >
+                      Please enter a valid mobile number.
+                    </p>
+                  )}
                 </div>
               </div>
               <div>
@@ -501,14 +506,21 @@ function Form() {
                 >
                   Lindekin
                 </label>
-                <input
-                  type="text"
-                  name="hs-work-email-hire-us-2"
-                  id="hs-work-email-hire-us-2"
-                  className={inputDefaultStateClasses}
-                  onInput={(e) => setLinkedin(e.target.value)}
-                  value={linkedin}
-                />
+                <div className="flex gap-2 items-center">
+                  <span className="text-gray-400"> https://linkedin.com/ </span>
+                  <input
+                    type="text"
+                    name="hs-work-email-hire-us-2"
+                    id="hs-work-email-hire-us-2"
+                    className={inputSocialMediaClasses}
+                    onInput={(e) =>
+                      setLinkedin("https://linkedin.com/" + e.target.value)
+                    }
+                    value={linkedin.substring(
+                      linkedin.indexOf("https://linkedin.com/") > -1 ? 21 : 0
+                    )}
+                  />
+                </div>
               </div>
               <div>
                 <label
@@ -517,70 +529,90 @@ function Form() {
                 >
                   Facebook
                 </label>
-                <input
-                  type="text"
-                  name="hs-work-email-hire-us-2"
-                  id="hs-work-email-hire-us-2"
-                  className={inputDefaultStateClasses}
-                  onInput={(e) => setFacebook(e.target.value)}
-                  value={facebook}
-                />
+                <div className="flex gap-2 items-center">
+                  <span className="text-gray-400"> https://facebook.com/ </span>
+                  <input
+                    type="text"
+                    name="hs-work-email-hire-us-2"
+                    id="hs-work-email-hire-us-2"
+                    className={inputDefaultStateClasses}
+                    onInput={(e) =>
+                      setFacebook("https://facebooks.com/" + e.target.value)
+                    }
+                    value={facebook.substring(
+                      facebook.indexOf("https://facebooks.com/") > -1 ? 22 : 0
+                    )}
+                  />
+                </div>
               </div>
 
-              <label className="mt-6 flex flex-row items-end justify-center">
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                      setLogoSRC(e.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                  }}
-                  className="block w-full text-sm text-gray-500
+              <div className="mt-6">
+                <label
+                  htmlFor="hs-company-hire-us-2"
+                  className="block text-sm text-gray-500 font-medium dark:text-white"
+                >
+                  Logo image
+                </label>
+                <label className="mt-2 flex flex-row items-end justify-center">
+                  <input
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        setLogoSRC(e.target.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                    className="block w-full text-sm text-gray-500
                     file:mr-4 file:py-2 file:px-4
-                    file:rounded-md file:border-0
+                    file:rounded-md file:border-2 file:border-solid
                     file:text-sm file:font-semibold
-                    file:bg-blue-500 file:text-white
-                    hover:file:bg-blue-600
+                    file:bg-white file:border-blue-500 file:text-blue-500
+                    hover:file:bg-blue-500 hover:file:text-white hover:cursor-pointer
                   "
-                />
-                {logoSRC && (
-                  <img
-                    src={logoSRC}
-                    style={{ width: "40px", height: "40px" }}
                   />
-                )}
-              </label>
-            </div>
-            <div className="text-center mt-6">
-              <p className="font-bold text-red-500 dark:text-red-300">
-                {errorMessage ? errorMessage : " "}
-              </p>
-            </div>
-            <div className="mt-6 flex justify-center items-end gap-3">
-              <button
-                className="text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800"
-                onClick={(e) => {
-                  validateFields();
-                }}
-                type="button"
-              >
-                Generate QR
-              </button>
-              <button
-                className="text-center bg-gray-400 hover:bg-gray-700 border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800"
-                type="button"
-              >
-                Generate Card
-              </button>
+                  {logoSRC && (
+                    <img
+                      src={logoSRC}
+                      style={{ width: "40px", height: "40px" }}
+                    />
+                  )}
+                </label>
+              </div>
+
+              {logoSRC && (
+                <div className="flex items-center flex-col">
+                  <p className="text-grey-400">QR code preview :</p>
+                  <Canvas
+                    logo={{
+                      src: logoSRC,
+                      options: {
+                        x: undefined,
+                        y: undefined,
+                      },
+                    }}
+                    text={"https://github.com/bunlong/next-qrcode"}
+                    options={{
+                      type: "image/png",
+                      quality: 0.3,
+                      level: "M",
+                      margin: 3,
+                      scale: 4,
+                      width: 200,
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
-            <div className="mt-3 text-center">
-              <p className="text-sm text-gray-500">
-                Scan the QR code to add your business card to your wallet.
-              </p>
+            <div className="mt-12 flex justify-center items-end gap-3">
+              <button
+                className="text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800 w-1/2"
+                type="submit"
+              >
+                Generate VCard
+              </button>
             </div>
           </form>
         </div>

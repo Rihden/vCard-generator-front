@@ -1,7 +1,8 @@
-import Form from "./components/Form.js";
+import router from "./routes";
+import { RouterProvider } from "react-router-dom";
 
 function App() {
-  return <Form></Form>;
+  return <RouterProvider router={router} />;
 }
 
 export default App;
