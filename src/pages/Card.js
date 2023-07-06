@@ -3,6 +3,7 @@ import {
   FaPaperPlane,
   FaRegEnvelope,
   FaMapPin,
+  FaChrome,
   FaBriefcase,
   FaLinkedin,
   FaSquareFacebook,
@@ -10,35 +11,46 @@ import {
 import { useQRCode } from "next-qrcode";
 import { IconContext } from "react-icons";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-function Card() {
+function exportUserInfoVCard(userInfo) {
+  const fileData = JSON.stringify(userInfo);
+  const blob = new Blob([fileData], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.download = `${userInfo.user_id}.vcf`;
+  link.href = url;
+  link.click();
+}
+
+export default function Card() {
   const { Canvas } = useQRCode();
-  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { uuid } = useParams();
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log(id);
-    const fetchUser = async function fetchUser() {
-      setTimeout(() => {
-        setUserData({
-          firstName: "Nedhir",
-          lastName: "Boudeli",
-          email: "nedhirboudeli@gmail.com",
-          title: "Software engineer",
-          phone: "+216 00 000 000",
-          mobile: "+216 52098686",
-          company: "Google",
-          companyAddress: "street somewhere, city, Country",
-          linkedin: "https://linkedin/nedhir",
-        });
-      }, 800);
+    if (!uuid) navigate('/')
+    const fetchUser = async () => {
+      const response = await (
+        await fetch(
+          `/api/users/${uuid}`
+        )
+      ).json();
+
+      if (!response.data.firstname) navigate('/')
+
+      setLoading(false)
+      setUserData(response.data)
     };
     fetchUser();
   }, []);
 
   return (
     <div>
+      {loading && <div>Loading ...</div>}
       {userData && (
         <div className="w-full ">
           <div
@@ -54,7 +66,7 @@ function Card() {
             >
               <div className="py-2 mt-16 text-gray-100 flex justify-center text-xl">
                 <h2 className="font-500">
-                  {userData.firstName} {userData.lastName}
+                  {userData.firstname} {userData.lastname}
                 </h2>
               </div>
               <div className="py-2 mb-4 text-gray-300 flex justify-center text-sm">
@@ -145,7 +157,7 @@ function Card() {
                 </div>
                 <div className="py-4 px-2 flex flex-col w-full">
                   <div className="pb-6 border-b border-gray-200">
-                    <span className="block text-sm">{userData.company} </span>
+                    <span className="block text-sm">{userData.companyname} </span>
                     <span className="text-gray-400 block text-sm font-500">
                       {userData.title}
                     </span>
@@ -163,12 +175,28 @@ function Card() {
                 <div className="py-4 px-2 flex flex-col w-full">
                   <div className="pb-6 border-b border-gray-200">
                     <span className="block text-sm">
-                      {userData.companyAddress}
+                      {userData.companyaddress}
                     </span>
                   </div>
                 </div>
               </div>
               <div className="flex gap-4 text-gray-600">
+                <div className="w-1/6 flex justify-end pt-4 pb-4 px-2">
+                  <IconContext.Provider
+                    value={{ size: "18px", className: "text-gray-600" }}
+                  >
+                    <FaChrome />
+                  </IconContext.Provider>
+                </div>
+                <div className="py-4 px-2 flex flex-col w-full">
+                  <div className="pb-6 border-b border-gray-200">
+                    <a target={"_blank"} href={userData.companywebsite} className="block text-sm">
+                      {userData.companywebsite}
+                    </a>
+                  </div>
+                </div>
+              </div>
+              {(userData.linkedin || userData.facebook) && <div className="flex gap-4 text-gray-600">
                 <div className="w-1/6 flex justify-end pt-6 pb-4 px-2"></div>
                 <div className="py-4 px-2 flex flex-col w-full">
                   <div className="pb-6 border-b border-gray-200">
@@ -177,7 +205,7 @@ function Card() {
                     </span>
                     <div className="flex gap-6 mt-4">
                       {userData.linkedin && (
-                        <a href={userData.linkedin}>
+                        <a target={"_blank"} href={`https://linkedin.com/in/${userData.linkedin}`}>
                           <IconContext.Provider
                             value={{ size: "30px", className: "text-gray-600" }}
                           >
@@ -186,7 +214,7 @@ function Card() {
                         </a>
                       )}
                       {userData.facebook && (
-                        <a href="https://Facebook.com">
+                        <a target={"_blank"} href={`https://facebook.com/${userData.facebook}`}>
                           {" "}
                           <IconContext.Provider
                             value={{ size: "30px", className: "text-gray-600" }}
@@ -198,25 +226,32 @@ function Card() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>}
               <div className="flex flex-col gap-6 mt-12 mb-8 justify-center items-center">
                 <span className="text-gray-600">
-                  For Android wallet Scan this QR code
+                  Scan QR Code with Android Wallet to add
                 </span>
 
                 <Canvas
-                  text={"https://github.com/bunlong/next-qrcode"}
+                  logo={{
+                    src: userData.logo,
+                    options: {
+                      width: 70
+                    }
+                  }
+                  }
+                  text={`${process.env.REACT_APP_DOMAIN}/redirect/${userData.user_id}`}
                   options={{
                     type: "image/png",
-                    quality: 0.3,
+                    quality: 0.6,
                     level: "M",
-                    margin: 3,
-                    scale: 4,
-                    width: 200,
+                    margin: 2,
+                    scale: 2,
+                    width: 300,
                   }}
                 />
-                <span className="text-gray-600"> Or you can </span>
-                <a href="https://goolge.com">
+                <span className="text-gray-600"> Or you can use the button down below </span>
+                <a href={`${process.env.REACT_APP_DOMAIN}/redirect/${userData.user_id}`}>
                   <img
                     style={{ maxWidth: "250px" }}
                     alt="Google Wallet add button"
@@ -225,6 +260,7 @@ function Card() {
                 </a>
                 <span className="text-gray-600"> Or </span>
                 <button
+                  onClick={() => exportUserInfoVCard(userData)}
                   className="w-4/5 p-4 text-gray-100 bg-blue-500
             "
                 >
@@ -239,4 +275,3 @@ function Card() {
   );
 }
 
-export default Card;
