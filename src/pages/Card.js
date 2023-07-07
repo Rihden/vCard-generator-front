@@ -14,8 +14,21 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 function exportUserInfoVCard(userInfo) {
-  const fileData = JSON.stringify(userInfo);
-  const blob = new Blob([fileData], { type: "text/plain" });
+  console.log(userInfo);
+  const fileText = `BEGIN:VCARD
+VERSION:3.0
+N:${userInfo.lastname};${userInfo.firstname}
+FN:${userInfo.lastname}
+ORG:${userInfo.companyname}
+ROLE:${userInfo.title}
+URL:${userInfo.companywebsite}
+EMAIL:${userInfo.email}
+TEL;TYPE=voice,work:${userInfo.phone}
+TEL;TYPE=CELL,WORK,pref:${userInfo.mobile};
+ADR;TYPE=work:${userInfo.companyaddress}
+UID: ${userInfo.user_id}
+END:VCARD`;
+  const blob = new Blob([fileText], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.download = `${userInfo.user_id}.vcf`;
@@ -29,21 +42,19 @@ export default function Card() {
 
   const { uuid } = useParams();
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!uuid) navigate('/')
+    if (!uuid) navigate("/");
     const fetchUser = async () => {
       const response = await (
-        await fetch(
-          `/api/users/${uuid}`
-        )
+        await fetch(process.env.REACT_APP_DOMAIN + `/api/users/${uuid}`)
       ).json();
 
-      if (!response.data.firstname) navigate('/')
+      if (!response.data.firstname) navigate("/");
 
-      setLoading(false)
-      setUserData(response.data)
+      setLoading(false);
+      setUserData(response.data);
     };
     fetchUser();
   }, []);
@@ -157,7 +168,9 @@ export default function Card() {
                 </div>
                 <div className="py-4 px-2 flex flex-col w-full">
                   <div className="pb-6 border-b border-gray-200">
-                    <span className="block text-sm">{userData.companyname} </span>
+                    <span className="block text-sm">
+                      {userData.companyname}{" "}
+                    </span>
                     <span className="text-gray-400 block text-sm font-500">
                       {userData.title}
                     </span>
@@ -190,43 +203,61 @@ export default function Card() {
                 </div>
                 <div className="py-4 px-2 flex flex-col w-full">
                   <div className="pb-6 border-b border-gray-200">
-                    <a target={"_blank"} href={userData.companywebsite} className="block text-sm">
+                    <a
+                      target={"_blank"}
+                      href={userData.companywebsite}
+                      className="block text-sm"
+                    >
                       {userData.companywebsite}
                     </a>
                   </div>
                 </div>
               </div>
-              {(userData.linkedin || userData.facebook) && <div className="flex gap-4 text-gray-600">
-                <div className="w-1/6 flex justify-end pt-6 pb-4 px-2"></div>
-                <div className="py-4 px-2 flex flex-col w-full">
-                  <div className="pb-6 border-b border-gray-200">
-                    <span className="block text-md text-pink-500">
-                      Social Media
-                    </span>
-                    <div className="flex gap-6 mt-4">
-                      {userData.linkedin && (
-                        <a target={"_blank"} href={`https://linkedin.com/in/${userData.linkedin}`}>
-                          <IconContext.Provider
-                            value={{ size: "30px", className: "text-gray-600" }}
+              {(userData.linkedin || userData.facebook) && (
+                <div className="flex gap-4 text-gray-600">
+                  <div className="w-1/6 flex justify-end pt-6 pb-4 px-2"></div>
+                  <div className="py-4 px-2 flex flex-col w-full">
+                    <div className="pb-6 border-b border-gray-200">
+                      <span className="block text-md text-pink-500">
+                        Social Media
+                      </span>
+                      <div className="flex gap-6 mt-4">
+                        {userData.linkedin && (
+                          <a
+                            target={"_blank"}
+                            href={`https://linkedin.com/in/${userData.linkedin}`}
                           >
-                            <FaLinkedin />
-                          </IconContext.Provider>
-                        </a>
-                      )}
-                      {userData.facebook && (
-                        <a target={"_blank"} href={`https://facebook.com/${userData.facebook}`}>
-                          {" "}
-                          <IconContext.Provider
-                            value={{ size: "30px", className: "text-gray-600" }}
+                            <IconContext.Provider
+                              value={{
+                                size: "30px",
+                                className: "text-gray-600",
+                              }}
+                            >
+                              <FaLinkedin />
+                            </IconContext.Provider>
+                          </a>
+                        )}
+                        {userData.facebook && (
+                          <a
+                            target={"_blank"}
+                            href={`https://facebook.com/${userData.facebook}`}
                           >
-                            <FaSquareFacebook />
-                          </IconContext.Provider>
-                        </a>
-                      )}
+                            {" "}
+                            <IconContext.Provider
+                              value={{
+                                size: "30px",
+                                className: "text-gray-600",
+                              }}
+                            >
+                              <FaSquareFacebook />
+                            </IconContext.Provider>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>}
+              )}
               <div className="flex flex-col gap-6 mt-12 mb-8 justify-center items-center">
                 <span className="text-gray-600">
                   Scan QR Code with Android Wallet to add
@@ -236,10 +267,9 @@ export default function Card() {
                   logo={{
                     src: userData.logo,
                     options: {
-                      width: 70
-                    }
-                  }
-                  }
+                      width: 70,
+                    },
+                  }}
                   text={`${process.env.REACT_APP_DOMAIN}/redirect/${userData.user_id}`}
                   options={{
                     type: "image/png",
@@ -250,8 +280,13 @@ export default function Card() {
                     width: 300,
                   }}
                 />
-                <span className="text-gray-600"> Or you can use the button down below </span>
-                <a href={`${process.env.REACT_APP_DOMAIN}/redirect/${userData.user_id}`}>
+                <span className="text-gray-600">
+                  {" "}
+                  Or you can use the button down below{" "}
+                </span>
+                <a
+                  href={`${process.env.REACT_APP_DOMAIN}/redirect/${userData.user_id}`}
+                >
                   <img
                     style={{ maxWidth: "250px" }}
                     alt="Google Wallet add button"
@@ -274,4 +309,3 @@ export default function Card() {
     </div>
   );
 }
-
