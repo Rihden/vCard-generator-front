@@ -61,7 +61,9 @@ export default function Card() {
 
   return (
     <div>
-      {loading && <div>Loading ...</div>}
+      {loading && <div className="flex justify-center items-center h-screen w-screen">
+        <div className="text-3xl">Loading ...</div>
+      </div>}
       {userData && (
         <div className="w-full ">
           <div
@@ -76,14 +78,14 @@ export default function Card() {
               style={{ boxShadow: "0 -5px 40px 7px rgba(0,0,0,0.08)" }}
             >
               <div className="py-2 mt-16 text-gray-100 flex justify-center text-xl">
-                <h2 className="font-500">
+                <h2 className="text-2xl font-600">
                   {userData.firstname} {userData.lastname}
                 </h2>
               </div>
-              <div className="py-2 mb-4 text-gray-300 flex justify-center text-sm">
+              <div className="mb-4 text-gray-300 flex justify-center text-md">
                 <h4>{userData.title}</h4>
               </div>
-              <div className="border-t  border-white/20 f flex text-sm">
+              <div className="border-t border-white/20 py-2 flex text-sm">
                 <div className="w-1/2  border-r border-white/20  hover:cursor-pointer hover:bg-slate-200/10">
                   <a
                     className="py-2 gap-1 flex flex-col justify-center items-center"
