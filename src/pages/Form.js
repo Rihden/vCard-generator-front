@@ -465,7 +465,7 @@ function Form() {
                   checked={addingLogo}
                   onChange={(e) => {
                     setAddingLogo(e.target.checked);
-                    setLogoSRC(null);
+                    if (e.target.checked) setLogoSRC(null);
                   }}
                   id="logo-checkbox"
                 />
