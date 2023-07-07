@@ -13,30 +13,29 @@ import { IconContext } from "react-icons";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-function exportUserInfoVCard(userInfo) {
-  console.log(userInfo);
-  const fileText = `BEGIN:VCARD
-VERSION:3.0
-N:${userInfo.lastname};${userInfo.firstname}
-FN:${userInfo.lastname}
-ORG:${userInfo.companyname}
-ROLE:${userInfo.title}
-URL:${userInfo.companywebsite}
-EMAIL:${userInfo.email}
-TEL;TYPE=voice,work:${userInfo.phone}
-TEL;TYPE=CELL,WORK,pref:${userInfo.mobile};
-ADR;TYPE=work:${userInfo.companyaddress}
-UID: ${userInfo.user_id}
-END:VCARD`;
-  const blob = new Blob([fileText], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = `${userInfo.user_id}.vcf`;
-  link.href = url;
-  link.click();
-}
-
-export default function Card() {
+function Card() {
+  function exportUserInfoVCard(userInfo) {
+    console.log(userInfo);
+    const fileText = `BEGIN:VCARD
+      VERSION:3.0
+      N:${userInfo.lastname};${userInfo.firstname}
+      FN:${userInfo.lastname}
+      ORG:${userInfo.companyname}
+      ROLE:${userInfo.title}
+      URL:${userInfo.companywebsite}
+      EMAIL:${userInfo.email}
+      TEL;TYPE=voice,work:${userInfo.phone}
+      TEL;TYPE=CELL,WORK,pref:${userInfo.mobile};
+      ADR;TYPE=work:${userInfo.companyaddress}
+      UID: ${userInfo.user_id}
+      END:VCARD`;
+    const blob = new Blob([fileText], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `${userInfo.user_id}.vcf`;
+    link.href = url;
+    link.click();
+  }
   const { Canvas } = useQRCode();
   const navigate = useNavigate();
 
@@ -61,9 +60,11 @@ export default function Card() {
 
   return (
     <div>
-      {loading && <div className="flex justify-center items-center h-screen w-screen">
-        <div className="text-3xl">Loading ...</div>
-      </div>}
+      {loading && (
+        <div className="flex justify-center items-center h-screen w-screen">
+          <div className="text-3xl">Loading ...</div>
+        </div>
+      )}
       {userData && (
         <div className="w-full ">
           <div
@@ -311,3 +312,5 @@ export default function Card() {
     </div>
   );
 }
+
+export default Card;
