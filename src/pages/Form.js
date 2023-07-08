@@ -18,7 +18,19 @@ function Form() {
     formState: { errors },
     getValues,
     handleSubmit,
-  } = useForm();
+  } = useForm({
+    values: {
+      firstname: "Amine",
+      lastname: "Bouzazi",
+      title: "Developer",
+      email: "bouzazihamma2000@gmail.com",
+      companyname: "Eskills",
+      companyaddress: "21 Rue la residance, Ariana",
+      phone: "50147078",
+      mobile: "27700078",
+      companywebsite: "https://eskills.agency",
+    }
+  });
 
   const alphabetic = /^[A-Za-z\s]*$/;
   const alphanumeric = /^[\w\-\s]+$/;
@@ -38,7 +50,7 @@ function Form() {
     setLoading(true);
     const formData = new FormData(form.current);
     if (logoSRC) formData.append("logo", logoSRC);
-    const response = await fetch(process.env.REACT_APP_DOMAIN + `/api/users`, {
+    const response = await fetch(process.env.REACT_APP_BACKEND_API + `/api/users`, {
       method: "POST",
       body: formData,
     });
@@ -92,9 +104,8 @@ function Form() {
                       type="text"
                       name="hs-firstname-hire-us-2"
                       id="hs-firstname-hire-us-2"
-                      className={`${inputDefaultStateClasses} ${
-                        errors.firstname ? inputErrorStateClasses : " "
-                      }`}
+                      className={`${inputDefaultStateClasses} ${errors.firstname ? inputErrorStateClasses : " "
+                        }`}
                       {...register("firstname", {
                         required: true,
                         pattern: alphabetic,
@@ -133,9 +144,8 @@ function Form() {
                       type="text"
                       name="hs-lastname-hire-us-2"
                       id="hs-lastname-hire-us-2"
-                      className={`${inputDefaultStateClasses} ${
-                        errors.lastname ? inputErrorStateClasses : " "
-                      }`}
+                      className={`${inputDefaultStateClasses} ${errors.lastname ? inputErrorStateClasses : " "
+                        }`}
                       {...register("lastname", {
                         required: true,
                         pattern: alphabetic,
@@ -176,9 +186,8 @@ function Form() {
                     type="text"
                     name="hs-work-title-hire-us-2"
                     id="hs-work-title-hire-us-2"
-                    className={`${inputDefaultStateClasses} ${
-                      errors.title ? inputErrorStateClasses : " "
-                    }`}
+                    className={`${inputDefaultStateClasses} ${errors.title ? inputErrorStateClasses : " "
+                      }`}
                     {...register("title", {
                       required: true,
                     })}
@@ -209,9 +218,8 @@ function Form() {
                     name="hs-work-email-hire-us-2"
                     id="hs-work-email-hire-us-2"
                     autoComplete="email"
-                    className={`${inputDefaultStateClasses} ${
-                      errors.email ? inputErrorStateClasses : " "
-                    }`}
+                    className={`${inputDefaultStateClasses} ${errors.email ? inputErrorStateClasses : " "
+                      }`}
                     {...register("email", {
                       required: true,
                       pattern: emailRegex,
@@ -251,9 +259,8 @@ function Form() {
                       type="text"
                       name="hs-company-hire-us-2"
                       id="hs-company-hire-us-2"
-                      className={`${inputDefaultStateClasses} ${
-                        errors.companyname ? inputErrorStateClasses : " "
-                      }`}
+                      className={`${inputDefaultStateClasses} ${errors.companyname ? inputErrorStateClasses : " "
+                        }`}
                       {...register("companyname", {
                         required: true,
                       })}
@@ -283,9 +290,8 @@ function Form() {
                       type="text"
                       name="hs-company-address-hire-us-2"
                       id="hs-company-address-hire-us-2"
-                      className={`${inputDefaultStateClasses} ${
-                        errors.companyaddress ? inputErrorStateClasses : " "
-                      }`}
+                      className={`${inputDefaultStateClasses} ${errors.companyaddress ? inputErrorStateClasses : " "
+                        }`}
                       {...register("companyaddress", {
                         required: true,
                       })}
@@ -316,9 +322,8 @@ function Form() {
                     type="text"
                     name="hs-company-website-hire-us-2"
                     id="hs-company-website-hire-us-2"
-                    className={`${inputDefaultStateClasses} ${
-                      errors.companywebsite ? inputErrorStateClasses : " "
-                    }`}
+                    className={`${inputDefaultStateClasses} ${errors.companywebsite ? inputErrorStateClasses : " "
+                      }`}
                     {...register("companywebsite", {
                       required: true,
                     })}
@@ -349,9 +354,8 @@ function Form() {
                       type="text"
                       name="hs-phone-hire-us-2"
                       id="hs-phone-hire-us-2"
-                      className={`${inputDefaultStateClasses} ${
-                        errors.phone ? inputErrorStateClasses : " "
-                      }`}
+                      className={`${inputDefaultStateClasses} ${errors.phone ? inputErrorStateClasses : " "
+                        }`}
                       {...register("phone", {
                         required: true,
                         pattern: numeric,
@@ -390,9 +394,8 @@ function Form() {
                       type="text"
                       name="hs-mobile-hire-us-2"
                       id="hs-mobile-hire-us-2"
-                      className={`${inputDefaultStateClasses} ${
-                        errors.mobile ? inputErrorStateClasses : " "
-                      }`}
+                      className={`${inputDefaultStateClasses} ${errors.mobile ? inputErrorStateClasses : " "
+                        }`}
                       {...register("mobile", {
                         required: true,
                         pattern: numeric,
@@ -465,7 +468,7 @@ function Form() {
                   checked={addingLogo}
                   onChange={(e) => {
                     setAddingLogo(e.target.checked);
-                    if (e.target.checked) setLogoSRC(null);
+                    if (!e.target.checked) setLogoSRC(null);
                   }}
                   id="logo-checkbox"
                 />
@@ -509,9 +512,8 @@ function Form() {
 
             <div className="mt-12 flex justify-center items-end gap-3">
               <button
-                className={`${
-                  !loading ? "bg-blue-600 cursor-pointer" : "bg-slate-600"
-                } text-center  border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800 w-1/2`}
+                className={`${!loading ? "bg-blue-600 cursor-pointer" : "bg-slate-600"
+                  } text-center  border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800 w-1/2`}
                 type="submit"
                 disabled={loading}
               >
