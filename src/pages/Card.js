@@ -48,7 +48,7 @@ export default function Card() {
     if (!uuid) navigate("/");
     const fetchUser = async () => {
       const response = await (
-        await fetch(process.env.REACT_APP_DOMAIN + `/api/users/${uuid}`)
+        await fetch(process.env.REACT_APP_BACKEND_API + `/api/users/${uuid}`)
       ).json();
 
       if (!response.data.firstname) navigate("/");
