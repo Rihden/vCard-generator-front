@@ -1,25 +1,25 @@
 import { createBrowserRouter } from "react-router-dom";
-import Form from "./pages/Form";
-import Card from "./pages/Card";
-import Redirect from "./pages/Redirect";
+import FormPage from "./pages/FormPage";
+import CardPage from "./pages/CardPage";
+import Redirect from "./pages/RedirectPage";
 
 const router = createBrowserRouter([
   {
     path: "*",
-    element: <div>Page Not found...</div>
+    element: <div>Page Not found...</div>,
   },
   {
     path: "/",
-    element: <Form />,
+    element: <FormPage />,
   },
   {
     path: "vCard/:uuid",
-    element: <Card />,
+    element: <CardPage />,
   },
   {
     path: "redirect/:uuid",
-    element: <Redirect />
-  }
+    element: <Redirect />,
+  },
 ]);
 
 export default router;

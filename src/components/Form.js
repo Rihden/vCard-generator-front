@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { useQRCode } from "next-qrcode";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import ErrorIcon from "../components/ErrorIcon";
 import CopyIcon from "../components/CopyIcon";
 
@@ -75,7 +74,6 @@ function Form() {
       link.click();
     }
   };
-
   return (
     <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
       <div className="max-w-xl mx-auto">
